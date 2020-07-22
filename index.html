@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>打字游戏</title>
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+    }
+
+    .gamePage{
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+        background-image:url(1.jpg);
+        background-repeat: no-repeat;
+    }
+
+    .card{
+        width: 200px;
+        height: 200px;
+        position: absolute;
+        bottom: 50px;
+        right: 130px;
+        display: flex;
+    }
+
+    .card > div{
+        width: 80px;
+        margin: 10px;
+        height: 120px;
+        background: #ddd;
+    }
+
+    .card div .records{
+        width: 100%;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 24px;
+        text-align: center;
+        color: purple;
+    }
+    .card div .lifes{
+        width: 100%;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 24px;
+        text-align: center;
+        color: purple;
+    }
+    .card div .title{
+        width: 100%;
+        height: 70px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 24px;
+        text-align: center;
+        color: orange;
+    }
+    .deadline{
+        width: 100%;
+        height: 2px;
+        background: rgb(72, 180, 243);
+        position: absolute;
+        bottom: 300px;
+    }
+</style>
+<body>
+    <div class="gamePage">
+        <div class="card">
+            <div>
+                <div class="records">0</div>
+                <div class="title">分数</div>  
+            </div>
+            <div>
+                <div class="lifes">100</div>
+                <div class="title">生命值</div>
+            </div>
+        </div>
+        <div class="deadline"></div>
+    </div>
+</body>
+<script>
+
+    //获取游戏界面元素
+    var gamePage = document.querySelector(".gamePage");
+
+    //设置字母数组
+    var words = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
+   
+    window.addEventListener("load",function(){
+        alert("开始游戏");   
+    })
+
+    //产生字符
+    function yieldWords(numbers) {
+        for(let i = 0 ; i < numbers ; i++){
+            var word = document.createElement("span");
+            word.innerHTML = words[Math.ceil(Math.random()*25)];
+            word.style.cssText = `
+                position: absolute;
+                left: ${Math.ceil(Math.random()*1000)}px;
+                top:  ${Math.ceil(Math.random()*20)}px;
+                font-size: 20px;
+                font-weight: bold;
+                background:rgba(${Math.ceil(Math.random()*255)},${Math.ceil(Math.random()*255)},${Math.ceil(Math.random()*255)});
+                display:block;
+                width:50px;
+                height:50px;
+                text-align:center;
+                line-height:50px;
+                color:#fff;
+                border-radius:30%;
+                transition: all .5s;
+                `;
+            gamePage.appendChild(word);
+        }
+    }
+
+    //调用产生字母的函数
+    yieldWords(6)
+    setInterval(function (speed=20){
+        var spans = document.querySelectorAll(".gamePage span");
+        for(let i = 0; i < spans.length ; i++){
+            spans[i].style.top = spans[i].offsetTop+speed+"px";
+            if(spans[i].offsetTop > 610){
+                var lifes = document.querySelector(".lifes");
+                if(parseInt(lifes.innerHTML)<90){
+                    alert("挑战失败！");
+                }
+                spans[i].style.opacity = 0;
+                gamePage.removeChild(spans[i]);
+                yieldWords(1);
+                lifes.innerHTML = parseInt(lifes.innerHTML)-1;
+            }
+        }
+    },100);
+
+    //点击清除字母
+    document.onkeydown = function (ev) {
+        var code  = String.fromCharCode(ev.keyCode);;
+        var spans = document.querySelectorAll(".gamePage span");
+        for(let i = 0; i < spans.length ; i++){
+            console.log(code);
+            console.log(spans[i].innerHTML == code);
+            if(spans[i].innerHTML == code){
+                gamePage.removeChild(spans[i]);
+                var records = document.querySelector(".records");
+                records.innerHTML = parseInt(records.innerHTML)+3;
+                yieldWords(1);
+            }
+        }
+    }
+
+
+</script>
+</html>
